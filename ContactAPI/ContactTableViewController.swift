@@ -70,6 +70,7 @@ extension ContactTableViewController {
             guard let self = self else { return }
             if let error = error {
                 print("failed to request access", error)
+                self.showAlert()
                 return
             }
             
@@ -94,14 +95,38 @@ extension ContactTableViewController {
                 }
                 
                 // store contacts to TableVC & reload TableVC
-                self.modelArray.removeAll()
                 self.modelArray.append(contentsOf: contactArray)
                 self.tableView.reloadData()
                 
             } else {
                 print("access denied")
+                self.showAlert()
             }
         }
+    }
+    
+    func showAlert() {
+        let alertController = UIAlertController(title: "", message: "Please allow ContactAPI access to your phonebook to seamlessly import your contacts.", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Cancel", style: .default) { [weak self] (action) in
+            guard let self = self else { return }
+            self.dismiss(animated: true, completion: nil)
+        }
+        let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { (action) in
+            // open iPhone's settings
+            guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            
+            if UIApplication.shared.canOpenURL(settingsURL) {
+                UIApplication.shared.open(settingsURL, options: [:]) { (success) in
+                    print("Settings opened: \(success)") // prints true
+                }
+            }
+        }
+        
+        alertController.addAction(okAction)
+        alertController.addAction(settingsAction)
+        self.present(alertController, animated: true, completion: nil)
     }
 
 }
