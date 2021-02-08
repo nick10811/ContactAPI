@@ -67,10 +67,13 @@ extension ContactTableViewController {
     private func fetchContactBook() {
         let store = CNContactStore()
         store.requestAccess(for: .contacts) { [weak self] (granted, error) in
+            // HINT: In the background thread
             guard let self = self else { return }
             if let error = error {
                 print("failed to request access", error)
-                self.showAlert()
+                DispatchQueue.main.async {
+                    self.showAlert()
+                }
                 return
             }
             
@@ -95,12 +98,16 @@ extension ContactTableViewController {
                 }
                 
                 // store contacts to TableVC & reload TableVC
-                self.modelArray.append(contentsOf: contactArray)
-                self.tableView.reloadData()
+                DispatchQueue.main.async {
+                    self.modelArray.append(contentsOf: contactArray)
+                    self.tableView.reloadData()
+                }
                 
             } else {
                 print("access denied")
-                self.showAlert()
+                DispatchQueue.main.async {
+                    self.showAlert()
+                }
             }
         }
     }
