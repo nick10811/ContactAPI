@@ -23,12 +23,20 @@ class ContactTableViewController: UITableViewController {
         button.addTarget(self, action: #selector(clickNavigationTitle(_:)), for: .touchUpInside)
         self.navigationItem.titleView = button
         
+        // clean button
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(clickRefreshButton(_:)))
+        
         // register UITableViewCell
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
     }
     
     @objc func clickNavigationTitle(_ sender: UIButton) {
         fetchContactBook()
+    }
+    
+    @objc func clickRefreshButton(_ sender: UIBarButtonItem) {
+        self.modelArray.removeAll()
+        self.tableView.reloadData()
     }
 
     // MARK: - Table view data source
