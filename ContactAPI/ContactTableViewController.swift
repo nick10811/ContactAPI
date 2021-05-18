@@ -62,6 +62,8 @@ class ContactTableViewController: UITableViewController {
         } else {
             content.image = UIImage(systemName: "photo")
         }
+        content.imageProperties.reservedLayoutSize = CGSize(width: 30, height: 30)
+        content.imageProperties.cornerRadius = 40
         cell.contentConfiguration = content
         
         return cell
