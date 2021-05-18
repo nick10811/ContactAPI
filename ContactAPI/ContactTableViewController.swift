@@ -57,6 +57,11 @@ class ContactTableViewController: UITableViewController {
         let mobile: String = contact.mobile ?? "No phone number."
         let email: String = contact.email ?? "No email."
         content.secondaryText = "\(mobile) | \(email)"
+        if let data = contact.thumbnail {
+            content.image = UIImage(data: data)
+        } else {
+            content.image = UIImage(systemName: "photo")
+        }
         cell.contentConfiguration = content
         
         return cell
@@ -78,7 +83,7 @@ extension ContactTableViewController {
             }
             
             if granted {
-                let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey, CNContactEmailAddressesKey]
+                let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey, CNContactEmailAddressesKey, CNContactThumbnailImageDataKey]
                 let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
                 
                 var contactArray: [ContactModel] = [ContactModel]()
@@ -88,9 +93,10 @@ extension ContactTableViewController {
                         let lastName: String = contact.familyName
                         let email: String? = contact.emailAddresses.first?.value as String?
                         let mobile: String? = contact.phoneNumbers.first?.value.stringValue
+                        let image: Data? = contact.thumbnailImageData
                         
-                        print("FN:\(firstName), LN:\(lastName), email:\(email), mobile:\(mobile)")
-                        contactArray.append(ContactModel(firstName: firstName, lastName: lastName, email: email, mobile: mobile))
+                        print("FN:\(firstName), LN:\(lastName), email:\(email), mobile:\(mobile), thumbnail size:\(image?.count)")
+                        contactArray.append(ContactModel(firstName: firstName, lastName: lastName, email: email, mobile: mobile, thumbnail: image))
                         
                     })
                 } catch let error {
